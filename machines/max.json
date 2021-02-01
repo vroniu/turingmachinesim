@@ -1,0 +1,239 @@
+{
+  "alphabet": [
+    "0",
+    "1",
+    "B",
+    "X",
+    "Y"
+  ],
+  "delta": {
+    "moves": [
+      {
+        "readState": 0,
+        "readChar": "1",
+        "newState": 1,
+        "newChar": "X",
+        "newDir": 1
+      },
+      {
+        "readState": 1,
+        "readChar": "1",
+        "newState": 1,
+        "newChar": "1",
+        "newDir": 1
+      },
+      {
+        "readState": 1,
+        "readChar": "0",
+        "newState": 2,
+        "newChar": "0",
+        "newDir": 1
+      },
+      {
+        "readState": 2,
+        "readChar": "1",
+        "newState": 2,
+        "newChar": "1",
+        "newDir": 1
+      },
+      {
+        "readState": 2,
+        "readChar": "B",
+        "newState": 3,
+        "newChar": "B",
+        "newDir": -1
+      },
+      {
+        "readState": 2,
+        "readChar": "Y",
+        "newState": 3,
+        "newChar": "Y",
+        "newDir": -1
+      },
+      {
+        "readState": 3,
+        "readChar": "1",
+        "newState": 4,
+        "newChar": "Y",
+        "newDir": -1
+      },
+      {
+        "readState": 3,
+        "readChar": "0",
+        "newState": 7,
+        "newChar": "0",
+        "newDir": -1
+      },
+      {
+        "readState": 4,
+        "readChar": "1",
+        "newState": 4,
+        "newChar": "1",
+        "newDir": -1
+      },
+      {
+        "readState": 4,
+        "readChar": "0",
+        "newState": 5,
+        "newChar": "0",
+        "newDir": -1
+      },
+      {
+        "readState": 5,
+        "readChar": "1",
+        "newState": 5,
+        "newChar": "1",
+        "newDir": -1
+      },
+      {
+        "readState": 5,
+        "readChar": "B",
+        "newState": 6,
+        "newChar": "B",
+        "newDir": 1
+      },
+      {
+        "readState": 5,
+        "readChar": "X",
+        "newState": 6,
+        "newChar": "X",
+        "newDir": 1
+      },
+      {
+        "readState": 6,
+        "readChar": "1",
+        "newState": 0,
+        "newChar": "1",
+        "newDir": 0
+      },
+      {
+        "readState": 6,
+        "readChar": "0",
+        "newState": 10,
+        "newChar": "0",
+        "newDir": -1
+      },
+      {
+        "readState": 7,
+        "readChar": "1",
+        "newState": 7,
+        "newChar": "1",
+        "newDir": -1
+      },
+      {
+        "readState": 7,
+        "readChar": "X",
+        "newState": 7,
+        "newChar": "X",
+        "newDir": -1
+      },
+      {
+        "readState": 7,
+        "readChar": "B",
+        "newState": 8,
+        "newChar": "B",
+        "newDir": 1
+      },
+      {
+        "readState": 8,
+        "readChar": "0",
+        "newState": 8,
+        "newChar": "B",
+        "newDir": 1
+      },
+      {
+        "readState": 8,
+        "readChar": "1",
+        "newState": 8,
+        "newChar": "1",
+        "newDir": 1
+      },
+      {
+        "readState": 8,
+        "readChar": "X",
+        "newState": 8,
+        "newChar": "1",
+        "newDir": 1
+      },
+      {
+        "readState": 8,
+        "readChar": "Y",
+        "newState": 8,
+        "newChar": "B",
+        "newDir": 1
+      },
+      {
+        "readState": 8,
+        "readChar": "B",
+        "newState": 9,
+        "newChar": "B",
+        "newDir": -1
+      },
+      {
+        "readState": 10,
+        "readChar": "1",
+        "newState": 10,
+        "newChar": "1",
+        "newDir": -1
+      },
+      {
+        "readState": 10,
+        "readChar": "X",
+        "newState": 10,
+        "newChar": "X",
+        "newDir": -1
+      },
+      {
+        "readState": 10,
+        "readChar": "B",
+        "newState": 11,
+        "newChar": "B",
+        "newDir": 1
+      },
+      {
+        "readState": 11,
+        "readChar": "0",
+        "newState": 11,
+        "newChar": "B",
+        "newDir": 1
+      },
+      {
+        "readState": 11,
+        "readChar": "1",
+        "newState": 11,
+        "newChar": "1",
+        "newDir": 1
+      },
+      {
+        "readState": 11,
+        "readChar": "Y",
+        "newState": 11,
+        "newChar": "1",
+        "newDir": 1
+      },
+      {
+        "readState": 11,
+        "readChar": "X",
+        "newState": 11,
+        "newChar": "B",
+        "newDir": 1
+      },
+      {
+        "readState": 11,
+        "readChar": "B",
+        "newState": 9,
+        "newChar": "B",
+        "newDir": 1
+      }
+    ]
+  },
+  "startingState": 0,
+  "currState": 0,
+  "currHeadPos": 0,
+  "endStates": [
+    9,
+    12
+  ],
+  "name": "max",
+  "description": "Znajdz maksimum dla alfabetu unarnego"
+}

@@ -1,0 +1,24 @@
+{
+  "alphabet": [
+    "a"
+  ],
+  "delta": {
+    "moves": [
+      {
+        "readState": 0,
+        "readChar": "1",
+        "newState": 1,
+        "newChar": "X",
+        "newDir": 1
+      }
+    ]
+  },
+  "startingState": 0,
+  "currState": 0,
+  "currHeadPos": 0,
+  "endStates": [
+    1
+  ],
+  "name": "test",
+  "description": "Testowa maszyna nie odpalac"
+}
