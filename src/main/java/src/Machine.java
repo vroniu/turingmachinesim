@@ -3,12 +3,12 @@ package src;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import java.io.*;
 
 public class Machine {
+
+    final static int symbolsToDisplay = 10;
 
     private Tape tape;
 
@@ -40,12 +40,12 @@ public class Machine {
     }
 
     public static Machine fromJson(String path){
-        FileReader readFrom = null;
+        //TODO - ogarnac wyjatki
+        FileReader readFrom;
         try {
             Gson gson = new Gson();
             readFrom = new FileReader(path);
-            Machine MT = gson.fromJson(readFrom, Machine.class);
-            return MT;
+            return gson.fromJson(readFrom, Machine.class);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -62,23 +62,19 @@ public class Machine {
         this.description = description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public void run(){
+        //Reset the machine
         this.currState=this.startingState;
         this.currHeadPos=0;
 
         boolean running = true;
-        int configurationNumber = 0;
         while(running){
             try {
-                displayTape(true);
-                System.out.print(" ");
-                displayConfig(configurationNumber++);
+                System.out.printf("%-10s|%-10s| ", "State: "+ this.currState, "Head: " + this.currHeadPos);
+                displayCurrentTape(true);
                 System.out.print("\n");
 
+                //Check if the symbol under the head is in the alphabet
                 char symbolAtHeadPos = tape.getSymbol(currHeadPos);
                 boolean valid = false;
                 for(char c:alphabet){
@@ -88,18 +84,23 @@ public class Machine {
                     }
                 }
                 if(!valid)throw new IllegalArgumentException("Symbol isnt in the alphabet!");
+
+                //Find a matching move
                 Move matchingMove = delta.getMatchingMove(currState, symbolAtHeadPos);
-                //matchingMove.print();
                 currState = matchingMove.getNewState();
                 tape.setSymbol(currHeadPos, matchingMove.getNewChar());
                 currHeadPos += matchingMove.getNewDir();
-                for (int state :endStates) {
+
+                //Check if machine is in final state
+                for (int state : endStates) {
                     if (state == currState) {
                         running = false;
                     }
                 }
 
             } catch (NullPointerException n){
+                //TODO - customowe exception
+                n.printStackTrace();
                 System.out.println("No defined move!");
                 return;
             } catch (IllegalArgumentException i){
@@ -109,31 +110,29 @@ public class Machine {
 
         }
         System.out.println("DONE!");
-//        for(int i =0; i<tape.getTapeLen(); i++){
-//            System.out.print(tape.getSymbol(i));
-//        }
-        displayTape(true);
-        displayConfig(configurationNumber);
+        System.out.printf("%-10s|%-10s| ", "State: "+ this.currState, "Head: " + this.currHeadPos);
+        displayCurrentTape(true);
+        this.tape.strip();
+        System.out.println("\nTape after the operation:");
+        displayAllTape(true);
         System.out.println(" ");
     }
 
-    public void displayTape(boolean showHead){
-        //If the head is in the "infinite blanks" before the tape
-        if (currHeadPos < 0 && showHead){
-            System.out.print("["+tape.getSymbol(currHeadPos)+"]");
-        }
-        for(int i =0; i<tape.getTapeLen(); i++){
-            if(i==currHeadPos && showHead){
-                System.out.print("["+tape.getSymbol(i)+"]");
-            }
-            else System.out.print(tape.getSymbol(i));
-        }
-        //If the head is in the "infinite blanks" after the tape
-        if (currHeadPos >= tape.getTapeLen() && showHead){
-            System.out.print("["+tape.getSymbol(currHeadPos)+"]");
+    public void displayCurrentTape(boolean showHead) {
+        for (int i = currHeadPos - Main.userSettings.getCharsToDisplay(); i <= currHeadPos + Main.userSettings.getCharsToDisplay(); i++) {
+            if (i == currHeadPos && showHead) {
+                System.out.print("[" + tape.getSymbol(i) + "]");
+            } else System.out.print(tape.getSymbol(i));
         }
     }
 
+    public void displayAllTape(boolean showHead){
+        for (int i = -tape.getNegativeTapeLen(); i < tape.getTapeLen(); i++) {
+            System.out.print(tape.getSymbol(i));
+        }
+    }
+
+    //TODO - zrobic tak zeby to dzialalo :DDD
     public void displayConfig(int configurationNumber){
         System.out.print("  K:"+(configurationNumber+1)+"   ");
         if (currHeadPos < 0){
@@ -153,43 +152,19 @@ public class Machine {
         }
     }
 
-    public void saveMachine(String path){
-//        JSONObject machine = new JSONObject();
-//
-//        JSONArray jAlphabet = new JSONArray();
-//        for (char c : this.alphabet) {
-//            jAlphabet.add(c);
-//        }
-//        machine.put("alphabet", jAlphabet);
-//
-//        JSONArray jFinalStates = new JSONArray();
-//        for (int i : this.endStates) {
-//            jFinalStates.add(i);
-//        }
-//        machine.put("starting state", this.currState);
-//        machine.put("final states", jFinalStates);
-//        machine.put("delta", this.delta.saveDeltaToJson());
-//        machine.put("name", this.name);
-//        machine.put("description", this.description);
-//        //System.out.println(machine.toString());
-//
-//        FileWriter savedMachine = null;
-//        try {
-//            savedMachine = new FileWriter(path);
-//            savedMachine.write(machine.toString());
-//            savedMachine.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
+    public int saveMachine(String path){
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = gson.toJson(this);
 
-        FileWriter savedMachine = null;
+        FileWriter savedMachine;
         try {
             savedMachine = new FileWriter(path);
             savedMachine.write(json);
             savedMachine.close();
         } catch (IOException e) {
             e.printStackTrace();
+            return -1;
         }
+        return 0;
     }
 }

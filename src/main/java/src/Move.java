@@ -1,7 +1,5 @@
 package src;
 
-import org.json.simple.JSONObject;
-
 public class Move {
 
     private int readState;
@@ -20,11 +18,8 @@ public class Move {
 
     }
 
-    
-
     public boolean checkMatch(int readState, char readChar){
-        if(this.readState == readState && this.readChar == readChar) return true;
-        else return false;
+        return this.readState == readState && this.readChar == readChar;
     }
 
     public int getNewState() {
@@ -44,6 +39,6 @@ public class Move {
     }
 
     public String stringValue(){
-        return new String(readState + "," + readChar + "," + newState + "," + newChar + "," + newDir);
+        return readState + "," + readChar + "," + newState + "," + newChar + "," + newDir;
     }
 }

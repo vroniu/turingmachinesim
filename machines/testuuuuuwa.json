@@ -1,0 +1,43 @@
+{
+  "tape": {
+    "tapeLen": 2,
+    "negativeTapeLen": 1,
+    "tapeData": [
+      "1",
+      "1"
+    ],
+    "tapeDataNegative": [
+      "1"
+    ]
+  },
+  "alphabet": [
+    "1",
+    "B"
+  ],
+  "delta": {
+    "moves": [
+      {
+        "readState": 0,
+        "readChar": "1",
+        "newState": 0,
+        "newChar": "1",
+        "newDir": -1
+      },
+      {
+        "readState": 0,
+        "readChar": "B",
+        "newState": 1,
+        "newChar": "1",
+        "newDir": 0
+      }
+    ]
+  },
+  "startingState": 0,
+  "currState": 1,
+  "currHeadPos": -1,
+  "endStates": [
+    1
+  ],
+  "name": "testuuuuuwa",
+  "description": "djafa"
+}

@@ -1,18 +1,17 @@
 package src;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DeltaFunc {
 
     private ArrayList<Move> moves;
 
-    public DeltaFunc(String[] movesToGenerate){
-        moves = new ArrayList<Move>();
+    public DeltaFunc(String[] movesToGenerate) throws WrongMoveDefinition{
+        moves = new ArrayList<>();
         for(String nMove : movesToGenerate){
             String[] moveData = nMove.split(",");
+            if(moveData.length != 5)throw new WrongMoveDefinition(moveData.length, nMove);
             int move = 0;
             if(moveData[4].equals("<") || moveData[4].equals("L"))move = -1;
             else if(moveData[4].equals(">") || moveData[4].equals("R"))move = 1;
@@ -31,14 +30,5 @@ public class DeltaFunc {
         }
         return null;
     }
-
-//    public JSONArray saveDeltaToJson(){
-//        JSONArray jMoves = new JSONArray();
-//        for (Move move : this.moves) {
-//            jMoves.add(move.stringValue());
-//        }
-//        return jMoves;
-//    }
-
 
 }

@@ -1,0 +1,33 @@
+{
+  "alphabet": [
+    "0",
+    "1",
+    "B"
+  ],
+  "delta": {
+    "moves": [
+      {
+        "readState": 0,
+        "readChar": "1",
+        "newState": 0,
+        "newChar": "1",
+        "newDir": 1
+      },
+      {
+        "readState": 0,
+        "readChar": "B",
+        "newState": 1,
+        "newChar": "1",
+        "newDir": 0
+      }
+    ]
+  },
+  "startingState": 0,
+  "currState": 0,
+  "currHeadPos": 0,
+  "endStates": [
+    1
+  ],
+  "name": "next",
+  "description": "Znajduje nastepnik w alfabecie unarnym"
+}
