@@ -31,11 +31,10 @@ public class Settings {
         return machinesFolder;
     }
 
-    public int setCharsToDisplay(int charsToDisplay) {
+    public void setCharsToDisplay(int charsToDisplay) throws NumberFormatException{
         if (charsToDisplay > 0) {
             this.charsToDisplay = charsToDisplay;
-            return 0;
-        } else return 1;
+        } else throw new NumberFormatException();
     }
 
     public void setBlankSymbol(char blankSymbol) {

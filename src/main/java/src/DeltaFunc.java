@@ -1,22 +1,33 @@
 package src;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class DeltaFunc {
 
     private ArrayList<Move> moves;
 
-    public DeltaFunc(String[] movesToGenerate) throws IllegalArgumentException, WrongMoveDefinition{
+    public DeltaFunc(ArrayList<String> movesToGenerate) throws IllegalArgumentException, WrongMoveDefinition{
         moves = new ArrayList<>();
         for(String nMove : movesToGenerate){
             String[] moveData = nMove.split(",");
             if(moveData.length != 5)throw new WrongMoveDefinition(moveData.length, nMove);
             int move;
-            if(moveData[4].equals("<") || moveData[4].equals("L"))move = -1;
-            else if(moveData[4].equals(">") || moveData[4].equals("R"))move = 1;
-            else if(moveData[4].equals("-") || moveData[4].equals("N"))move = 0;
-            else throw new IllegalArgumentException("Wrong move definition! Expected <,L,>,R,-,N, got: "+ moveData[4]);
+            switch (moveData[4]) {
+                case "<":
+                case "L":
+                    move = -1;
+                    break;
+                case ">":
+                case "R":
+                    move = 1;
+                    break;
+                case "-":
+                case "N":
+                    move = 0;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Wrong move definition! Expected <,L,>,R,-,N, got: " + moveData[4]);
+            }
             moves.add(new Move(Integer.parseInt(moveData[0]),
                                 moveData[1].charAt(0),
                                 Integer.parseInt(moveData[2]),

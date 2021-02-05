@@ -1,14 +1,15 @@
 
 package src;
 
+import com.diogonunes.jcolor.Attribute;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.*;
 
-public class Machine {
+import static com.diogonunes.jcolor.Ansi.colorize;
 
-    final static int symbolsToDisplay = 10;
+public class Machine {
 
     private Tape tape;
 
@@ -40,7 +41,6 @@ public class Machine {
     }
 
     public static Machine fromJson(String path){
-        //TODO - ogarnac wyjatki
         FileReader readFrom;
         try {
             Gson gson = new Gson();
@@ -60,6 +60,10 @@ public class Machine {
     public void setName(String name, String description) {
         this.name = name;
         this.description = description;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void run(){
@@ -99,12 +103,10 @@ public class Machine {
                 }
 
             } catch (NullPointerException n){
-                //TODO - customowe exception
-//                n.printStackTrace();
-                System.out.println("No defined move!");
+                System.out.println(colorize("No defined move!", Attribute.BRIGHT_RED_TEXT()));
                 return;
             } catch (IllegalArgumentException i){
-                System.out.println(i.getMessage());
+                System.out.println(colorize(i.getMessage(), Attribute.BRIGHT_RED_TEXT()));
                 return;
             }
 
@@ -114,7 +116,7 @@ public class Machine {
         displayCurrentTape(true);
         this.tape.strip();
         System.out.println("\nTape after the operation:");
-        displayAllTape(true);
+        displayAllTape();
         System.out.println(" ");
     }
 
@@ -126,29 +128,9 @@ public class Machine {
         }
     }
 
-    public void displayAllTape(boolean showHead){
+    public void displayAllTape(){
         for (int i = -tape.getNegativeTapeLen(); i < tape.getTapeLen(); i++) {
             System.out.print(tape.getSymbol(i));
-        }
-    }
-
-    //TODO - zrobic tak zeby to dzialalo :DDD
-    public void displayConfig(int configurationNumber){
-        System.out.print("  K:"+(configurationNumber+1)+"   ");
-        if (currHeadPos < 0){
-            System.out.print("q"+currState+" "+tape.getSymbol(currHeadPos));
-        }
-        for(int i =0; i<tape.getTapeLen(); i++){
-            if(i==currHeadPos ){
-                //Dont print the whitespace for the first symbol
-                if(i==0)System.out.print("q"+currState+" "+tape.getSymbol(i));
-                else System.out.print(" q"+currState+" "+tape.getSymbol(i));
-            }
-            else System.out.print(tape.getSymbol(i));
-        }
-        //If the head is in the "infinite blanks" after the tape
-        if (currHeadPos >= tape.getTapeLen()){
-            System.out.print(" q"+currState+" "+tape.getSymbol(currHeadPos));
         }
     }
 
