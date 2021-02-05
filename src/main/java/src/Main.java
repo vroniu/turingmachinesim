@@ -2,6 +2,7 @@ package src;
 
 import com.diogonunes.jcolor.Attribute;
 import com.google.gson.Gson;
+import dnl.utils.text.table.TextTable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
@@ -16,6 +17,11 @@ public class Main {
     public static Scanner userInput;
     protected static Settings userSettings;
     public static String line = new String(new char[51]).replace('\0', '-');
+
+    public static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
 
     public static void main(String[] args) throws IOException {
 
@@ -58,25 +64,30 @@ public class Main {
                 "Type " + colorize("exit", Attribute.BRIGHT_GREEN_TEXT()) + " to close the app.");
 
         String action = userInput.nextLine();
-        if(action.strip().compareToIgnoreCase("new") == 0){
+        if(action.trim().compareToIgnoreCase("new") == 0){
             System.out.println("Lets create a new machine!");
             Machine newMachine = createNewMachine();
             machineMainMenu(newMachine);
         }
-        else if(action.strip().compareToIgnoreCase("load") == 0){
+        else if(action.trim().compareToIgnoreCase("load") == 0){
             //TODO - better formatting
 
-            System.out.println("Lets load a machine!\nSelect a machine by entering the name or the index.");
+            System.out.println("Lets load a machine!");
             File dir = new File(Main.userSettings.getMachinesFolder());
             String[] machinesList = dir.list((file, s) -> s.endsWith(".json")); //cool lambda here
+            String[][] tableData = new String[machinesList.length][3];
+            for (int i = 0; i < machinesList.length; i++){
+                tableData[i] = new String[]{String.valueOf(i), machinesList[i], Machine.getMachineDescriptionFromJson(Main.userSettings.getMachinesFolder() + "/" + machinesList[i])};
+            }
             //Check if there are any machines
             if(machinesList.length == 0){
                 System.out.println("Nie masz jeszcze zapisanych żadnych maszyn! Powrót do menu głównego.");
                 mainMenu();
             }
-            for (int i = 0; i < machinesList.length; i++){
-                System.out.println("["+i+"] "+machinesList[i] + " opis maszyny: " + Machine.getMachineDescriptionFromJson(Main.userSettings.getMachinesFolder() + "/" + machinesList[i]));
-            }
+
+            TextTable machines = new TextTable(new String[]{"Index", "Name", "Description"}, tableData);
+            machines.printTable();
+            System.out.println("Select a machine by entering the name or the index.");
 
             //parse by index or by name
             String selMachine = "";
@@ -106,13 +117,13 @@ public class Main {
             }
 
             //Load the machine and go into menu
-            Machine newMachine = Machine.fromJson(Main.userSettings.getMachinesFolder() + "/" +selMachine.strip());
+            Machine newMachine = Machine.fromJson(Main.userSettings.getMachinesFolder() + "/" +selMachine.trim());
             if(newMachine != null)
                 machineMainMenu(newMachine);
             else mainMenu();
-        } else if(action.strip().compareToIgnoreCase("exit") == 0){
+        } else if(action.trim().compareToIgnoreCase("exit") == 0){
             System.exit(0);
-        } else if(action.strip().compareToIgnoreCase("settings") == 0){
+        } else if(action.trim().compareToIgnoreCase("settings") == 0){
             settingsMenu();
         }
         else {
@@ -122,9 +133,11 @@ public class Main {
     }
 
     public static void machineMainMenu(Machine MT){
-        System.out.println("Type run to enter a tape and run it on the machine.\nType save to save the machine.\nType menu to exit to main menu.");
+        System.out.println("Type " + colorize("run", Attribute.BRIGHT_GREEN_TEXT()) + " to enter a tape and run it on the machine.\n" +
+                "Type " + colorize("save", Attribute.BRIGHT_GREEN_TEXT()) + " to save the machine.\n" +
+                "Type " + colorize("menu", Attribute.BRIGHT_GREEN_TEXT()) + " to exit to main menu.");
         String action = userInput.nextLine();
-        if (action.strip().compareToIgnoreCase("run") == 0) {
+        if (action.trim().compareToIgnoreCase("run") == 0) {
             boolean running = true;
             while(running){
                 System.out.println("Enter the tape.\n");
@@ -134,24 +147,24 @@ public class Main {
                 MT.run();
                 System.out.println("Would you like to enter another tape? [Y/n]");
                 action = userInput.nextLine();
-                if (action.strip().equalsIgnoreCase("N")) {
+                if (action.trim().equalsIgnoreCase("N")) {
                     running = false;
                     machineMainMenu(MT);
                 }
             }
 
-        } else if (action.strip().compareToIgnoreCase("save") == 0) {
+        } else if (action.trim().compareToIgnoreCase("save") == 0) {
             System.out.println("Enter the name of the machine.");
             String machineName = userInput.nextLine();
             System.out.println("You can also create a short description for the machine.\nIf you want to skip this step, just dont enter anything an press Enter.");
             String machineDescription = userInput.nextLine();
             MT.setName(machineName, machineDescription);
-            if(MT.saveMachine(Main.userSettings.getMachinesFolder() + "/" + machineName.strip()+".json") == 0)
+            if(MT.saveMachine(Main.userSettings.getMachinesFolder() + "/" + machineName.trim()+".json") == 0)
                 System.out.println("Machine saved!\n");
             else System.out.println("Unable to save a machine.\n");
             machineMainMenu(MT);
 
-        } else if (action.strip().compareToIgnoreCase("menu") == 0) {
+        } else if (action.trim().compareToIgnoreCase("menu") == 0) {
             System.out.println("Exiting to main menu.");
             mainMenu();
         } else {
@@ -202,6 +215,8 @@ public class Main {
                 System.out.println("One of the moves is not defined correcty.\n" +
                         "The expected length is 5, but "+wrongMoveDefinition.getSize()+ " was provided.\n" +
                         "Move in question: " + wrongMoveDefinition.getMoveDefinition());
+            } catch (IllegalArgumentException illegalMoveException){
+                System.out.println(illegalMoveException.getMessage());
             }
         }
 
@@ -226,38 +241,38 @@ public class Main {
                 "Symbols to display when running the machine: " + userSettings.getCharsToDisplay() +
                 "\nDefault blank symbol: " + userSettings.getBlankSymbol() +
                 "\nStored machines directory name: " + userSettings.getMachinesFolder());
-        System.out.println("Type " + colorize("display ", Attribute.BRIGHT_GREEN_TEXT()) + "VALUE to set the number of symbols to display to VALUE.\n" +
-                "Type blank CHAR to set the default blank character to CHAR.\n" +
-                "Type directory PATH to set the machines directory to PATH.\n" +
-                "Type default to restore the settings to default.\n" +
-                "Type menu to exit to the menu.");
+        System.out.println("Type " + colorize("display ", Attribute.BRIGHT_GREEN_TEXT()) + colorize("VALUE", Attribute.BRIGHT_YELLOW_TEXT()) + " to set the number of symbols to display to VALUE.\n" +
+                "Type " + colorize("blank ", Attribute.BRIGHT_GREEN_TEXT()) + colorize("CHAR", Attribute.BRIGHT_YELLOW_TEXT()) + " to set the default blank character to CHAR.\n" +
+                "Type " + colorize("directory ", Attribute.BRIGHT_GREEN_TEXT()) + colorize("PATH", Attribute.BRIGHT_YELLOW_TEXT()) + " to set the machines directory to PATH.\n" +
+                "Type " + colorize("default", Attribute.BRIGHT_GREEN_TEXT()) + " to restore the settings to default.\n" +
+                "Type " + colorize("menu", Attribute.BRIGHT_GREEN_TEXT()) + " to exit to the menu.");
         String action = userInput.nextLine();
         String[] commandAndArgs = action.split(" ");
         boolean settingsChanged = false;
-        if (commandAndArgs[0].strip().compareToIgnoreCase("display") == 0) {
+        if (commandAndArgs[0].trim().compareToIgnoreCase("display") == 0) {
             if(userSettings.setCharsToDisplay(Integer.parseInt(commandAndArgs[1]))==0){
                 settingsChanged = true;
             } else {
                 System.out.println("Invalid argument.");
             }
-        } else if (commandAndArgs[0].strip().compareToIgnoreCase("blank") == 0) {
+        } else if (commandAndArgs[0].trim().compareToIgnoreCase("blank") == 0) {
             userSettings.setBlankSymbol(commandAndArgs[1].charAt(0));
             settingsChanged = true;
-        } else if (commandAndArgs[0].strip().compareToIgnoreCase("directory") == 0) {
+        } else if (commandAndArgs[0].trim().compareToIgnoreCase("directory") == 0) {
             userSettings.setMachinesFolder(commandAndArgs[1]);
             settingsChanged = true;
-        } else if (commandAndArgs[0].strip().compareToIgnoreCase("default") == 0) {
+        } else if (commandAndArgs[0].trim().compareToIgnoreCase("default") == 0) {
             userSettings = new Settings();
             settingsChanged = true;
         }
-        else if (commandAndArgs[0].strip().compareToIgnoreCase("menu") == 0) {
+        else if (commandAndArgs[0].trim().compareToIgnoreCase("menu") == 0) {
             System.out.println("Exiting to main menu.");
             mainMenu();
         } else {
             System.out.println("Invalid command.");
         }
         if(settingsChanged){
-            System.out.print("Settings changed.");
+            System.out.print("Settings changed. ");
             userSettings.saveSettings();
         }
         settingsMenu();

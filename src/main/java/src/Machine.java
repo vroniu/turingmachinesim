@@ -100,7 +100,7 @@ public class Machine {
 
             } catch (NullPointerException n){
                 //TODO - customowe exception
-                n.printStackTrace();
+//                n.printStackTrace();
                 System.out.println("No defined move!");
                 return;
             } catch (IllegalArgumentException i){
