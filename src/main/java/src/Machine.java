@@ -8,8 +8,6 @@ import java.io.*;
 
 public class Machine {
 
-    final static int symbolsToDisplay = 10;
-
     private Tape tape;
 
     private char[] alphabet;
@@ -40,7 +38,6 @@ public class Machine {
     }
 
     public static Machine fromJson(String path){
-        //TODO - ogarnac wyjatki
         FileReader readFrom;
         try {
             Gson gson = new Gson();
@@ -99,8 +96,6 @@ public class Machine {
                 }
 
             } catch (NullPointerException n){
-                //TODO - customowe exception
-//                n.printStackTrace();
                 System.out.println("No defined move!");
                 return;
             } catch (IllegalArgumentException i){

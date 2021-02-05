@@ -75,6 +75,13 @@
         </dependency>
 
         <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+        </dependency>
+
+
+        <dependency>
             <groupId>com.massisframework</groupId>
             <artifactId>j-text-utils</artifactId>
             <version>0.3.4</version>

@@ -3,6 +3,7 @@ package src;
 import com.diogonunes.jcolor.Attribute;
 import com.google.gson.Gson;
 import dnl.utils.text.table.TextTable;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
@@ -18,9 +19,19 @@ public class Main {
     protected static Settings userSettings;
     public static String line = new String(new char[51]).replace('\0', '-');
 
-    public static void clearScreen() {
+    private static void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
+    }
+
+    private static boolean getUserInputYesNo(){
+        System.out.print(colorize(">> ", Attribute.BRIGHT_GREEN_TEXT()));
+        return userInput.nextLine().trim().equalsIgnoreCase("Y");
+    }
+
+    private static String getUserInput(){
+        System.out.print(colorize(">> ", Attribute.BRIGHT_GREEN_TEXT()));
+        return userInput.nextLine();
     }
 
     public static void main(String[] args) throws IOException {
@@ -52,9 +63,7 @@ public class Main {
         if(!dir.exists()){
             dir.mkdirs();
         }
-
         mainMenu();
-
     }
 
     public static void mainMenu(){
@@ -63,7 +72,7 @@ public class Main {
                 "Type " + colorize("settings", Attribute.BRIGHT_GREEN_TEXT()) + " to view and change settings.\n" +
                 "Type " + colorize("exit", Attribute.BRIGHT_GREEN_TEXT()) + " to close the app.");
 
-        String action = userInput.nextLine();
+        String action = getUserInput();
         if(action.trim().compareToIgnoreCase("new") == 0){
             System.out.println("Lets create a new machine!");
             Machine newMachine = createNewMachine();
@@ -93,7 +102,7 @@ public class Main {
             String selMachine = "";
             boolean validMachineSelected = false;
             while(!validMachineSelected) {
-                action = userInput.nextLine();
+                action = getUserInput();
                 if (action.matches("-?\\d+")) {
                     //is integer
                     if (Integer.parseInt(action) < machinesList.length && Integer.parseInt(action) > -1){
@@ -136,18 +145,16 @@ public class Main {
         System.out.println("Type " + colorize("run", Attribute.BRIGHT_GREEN_TEXT()) + " to enter a tape and run it on the machine.\n" +
                 "Type " + colorize("save", Attribute.BRIGHT_GREEN_TEXT()) + " to save the machine.\n" +
                 "Type " + colorize("menu", Attribute.BRIGHT_GREEN_TEXT()) + " to exit to main menu.");
-        String action = userInput.nextLine();
+        String action = getUserInput();
         if (action.trim().compareToIgnoreCase("run") == 0) {
             boolean running = true;
             while(running){
-                System.out.println("Enter the tape.\n");
-                String tapeInput = userInput.nextLine();
-                Tape tape = new Tape(tapeInput);
+                System.out.println("Enter the tape.");
+                Tape tape = new Tape(getUserInput());
                 MT.setTape(tape);
                 MT.run();
                 System.out.println("Would you like to enter another tape? [Y/n]");
-                action = userInput.nextLine();
-                if (action.trim().equalsIgnoreCase("N")) {
+                if (!getUserInputYesNo()) {
                     running = false;
                     machineMainMenu(MT);
                 }
@@ -155,13 +162,13 @@ public class Main {
 
         } else if (action.trim().compareToIgnoreCase("save") == 0) {
             System.out.println("Enter the name of the machine.");
-            String machineName = userInput.nextLine();
+            String machineName = getUserInput();
             System.out.println("You can also create a short description for the machine.\nIf you want to skip this step, just dont enter anything an press Enter.");
-            String machineDescription = userInput.nextLine();
+            String machineDescription = getUserInput();
             MT.setName(machineName, machineDescription);
             if(MT.saveMachine(Main.userSettings.getMachinesFolder() + "/" + machineName.trim()+".json") == 0)
-                System.out.println("Machine saved!\n");
-            else System.out.println("Unable to save a machine.\n");
+                System.out.println("Machine saved!");
+            else System.out.println("Unable to save a machine.");
             machineMainMenu(MT);
 
         } else if (action.trim().compareToIgnoreCase("menu") == 0) {
@@ -174,8 +181,8 @@ public class Main {
     }
 
     public static Machine createNewMachine(){
-        System.out.println("Define the alphabet - enter all allowed symbols, separated by a coma.\n");
-        String alphabetString = userInput.nextLine();
+        System.out.println("Define the alphabet - enter all allowed symbols, separated by a coma.");
+        String alphabetString = getUserInput();
         String[] alphabetChars = alphabetString.split(",");
         char[] alphabet = new char[alphabetChars.length];
         for (int i = 0; i < alphabetChars.length; i++) {
@@ -191,7 +198,7 @@ public class Main {
 
         DeltaFunc delta = null;
         while(delta == null) {
-            System.out.println("Define the machine's moves.\nTemplate: current_state  ,  char_under_the_head  ,  new_state  ,  new_char  ,  direction\nWhen youre done, type 'end'\n");
+            System.out.println("Define the machine's moves.\nTemplate: current_state  ,  char_under_the_head  ,  new_state  ,  new_char  ,  direction\nWhen youre done, type " + colorize("end", Attribute.BRIGHT_GREEN_TEXT()) + ".");
             ArrayList<String> inputMoves = new ArrayList<>();
             String input;
             while (true) {
@@ -220,16 +227,16 @@ public class Main {
             }
         }
 
-        System.out.println("Define the end states - enter their indexes, separated by a coma.\n");
-        String endStates = userInput.nextLine();
+        System.out.println("Define the end states - enter their indexes, separated by a coma.");
+        String endStates = getUserInput();
         String[] endStatesArray = endStates.split(",");
         int[] endStatesInt = new int[endStatesArray.length];
         for (int i = 0; i < endStatesArray.length; i++) {
             endStatesInt[i] = Integer.parseInt(endStatesArray[i]);
         }
 
-        System.out.println("Enter the starting state.\n");
-        int start = Integer.parseInt(userInput.nextLine());
+        System.out.println("Enter the starting state.");
+        int start = Integer.parseInt(getUserInput());
 
         System.out.println("The machine is configured!");
 
@@ -246,8 +253,7 @@ public class Main {
                 "Type " + colorize("directory ", Attribute.BRIGHT_GREEN_TEXT()) + colorize("PATH", Attribute.BRIGHT_YELLOW_TEXT()) + " to set the machines directory to PATH.\n" +
                 "Type " + colorize("default", Attribute.BRIGHT_GREEN_TEXT()) + " to restore the settings to default.\n" +
                 "Type " + colorize("menu", Attribute.BRIGHT_GREEN_TEXT()) + " to exit to the menu.");
-        String action = userInput.nextLine();
-        String[] commandAndArgs = action.split(" ");
+        String[] commandAndArgs = getUserInput().split(" ");
         boolean settingsChanged = false;
         if (commandAndArgs[0].trim().compareToIgnoreCase("display") == 0) {
             if(userSettings.setCharsToDisplay(Integer.parseInt(commandAndArgs[1]))==0){
@@ -259,8 +265,22 @@ public class Main {
             userSettings.setBlankSymbol(commandAndArgs[1].charAt(0));
             settingsChanged = true;
         } else if (commandAndArgs[0].trim().compareToIgnoreCase("directory") == 0) {
-            userSettings.setMachinesFolder(commandAndArgs[1]);
-            settingsChanged = true;
+            File newDir = new File(commandAndArgs[1]);
+            if(newDir.mkdirs()){
+                System.out.println("Folder created! Do you wish to move all the machines to the new folder? [Y/n]");
+                if(getUserInputYesNo()) {
+                    try {
+                        File dir = new File(userSettings.getMachinesFolder());
+                        FileUtils.copyDirectory(dir, newDir);
+                    } catch (IOException e){
+                        System.out.println("Unable to copy files.");
+                    }
+                }
+                userSettings.setMachinesFolder(commandAndArgs[1]);
+                settingsChanged = true;
+            } else {
+                System.out.println("Unable to create a folder with that name.");
+            }
         } else if (commandAndArgs[0].trim().compareToIgnoreCase("default") == 0) {
             userSettings = new Settings();
             settingsChanged = true;
@@ -276,7 +296,6 @@ public class Main {
             userSettings.saveSettings();
         }
         settingsMenu();
-
     }
 
 }
