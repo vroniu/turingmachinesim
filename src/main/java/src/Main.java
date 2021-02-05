@@ -34,6 +34,12 @@ public class Main {
         return userInput.nextLine();
     }
 
+    private static void printMenu(String[] commands, String[] descriptions){
+        for(int i = 0; i < commands.length; i++){
+            System.out.println("Type "+ colorize(commands[i], Attribute.BRIGHT_GREEN_TEXT()) +" to " + descriptions[i] + ".");
+        }
+    }
+
     public static void main(String[] args) throws IOException {
 
         System.out.println(line);
@@ -67,10 +73,8 @@ public class Main {
     }
 
     public static void mainMenu(){
-        System.out.println("Type "+ colorize("new", Attribute.BRIGHT_GREEN_TEXT()) +" to create a new machine.\n" +
-                "Type " + colorize("load", Attribute.BRIGHT_GREEN_TEXT()) + " to load a machine from a file.\n" +
-                "Type " + colorize("settings", Attribute.BRIGHT_GREEN_TEXT()) + " to view and change settings.\n" +
-                "Type " + colorize("exit", Attribute.BRIGHT_GREEN_TEXT()) + " to close the app.");
+        printMenu(new String[]{"new", "load", "settings", "exit"},
+                new String[]{"create a new machine", "load a machine from a file", "view and change settings", "close the app"});
 
         String action = getUserInput();
         if(action.trim().compareToIgnoreCase("new") == 0){
@@ -90,7 +94,7 @@ public class Main {
             }
             //Check if there are any machines
             if(machinesList.length == 0){
-                System.out.println("Nie masz jeszcze zapisanych żadnych maszyn! Powrót do menu głównego.");
+                System.out.println(colorize("You don't have any saved machines!", Attribute.BRIGHT_RED_TEXT()) + "\nReturning to main menu.");
                 mainMenu();
             }
 
@@ -121,7 +125,7 @@ public class Main {
                     }
                 }
                 if(!validMachineSelected){
-                    System.out.println("Sorry, this machine doesnt seem to exist!\nRetry selecting the machine.");
+                    System.out.println(colorize("Sorry, this machine doesn't seem to exist!", Attribute.BRIGHT_RED_TEXT()) +"\nRetry selecting the machine.");
                 }
             }
 
@@ -136,15 +140,15 @@ public class Main {
             settingsMenu();
         }
         else {
-            System.out.println("Invalid command.");
+            System.out.println(colorize("Invalid command.", Attribute.BRIGHT_RED_TEXT()));
             mainMenu();
         }
     }
 
     public static void machineMainMenu(Machine MT){
-        System.out.println("Type " + colorize("run", Attribute.BRIGHT_GREEN_TEXT()) + " to enter a tape and run it on the machine.\n" +
-                "Type " + colorize("save", Attribute.BRIGHT_GREEN_TEXT()) + " to save the machine.\n" +
-                "Type " + colorize("menu", Attribute.BRIGHT_GREEN_TEXT()) + " to exit to main menu.");
+        printMenu(new String[]{"run", "save", "menu"},
+                new String[]{"enter a tape and run it on the machine", "save the machine", "exit to main menu"});
+
         String action = getUserInput();
         if (action.trim().compareToIgnoreCase("run") == 0) {
             boolean running = true;
@@ -168,14 +172,14 @@ public class Main {
             MT.setName(machineName, machineDescription);
             if(MT.saveMachine(Main.userSettings.getMachinesFolder() + "/" + machineName.trim()+".json") == 0)
                 System.out.println("Machine saved!");
-            else System.out.println("Unable to save a machine.");
+            else System.out.println(colorize("Unable to save the machine.", Attribute.BRIGHT_RED_TEXT()));
             machineMainMenu(MT);
 
         } else if (action.trim().compareToIgnoreCase("menu") == 0) {
             System.out.println("Exiting to main menu.");
             mainMenu();
         } else {
-            System.out.println("Invalid command.");
+            System.out.println(colorize("Invalid command.", Attribute.BRIGHT_RED_TEXT()));
             machineMainMenu(MT);
         }
     }
@@ -219,7 +223,7 @@ public class Main {
             try {
                 delta = new DeltaFunc(deltaString);
             } catch (WrongMoveDefinition wrongMoveDefinition) {
-                System.out.println("One of the moves is not defined correcty.\n" +
+                System.out.println(colorize("One of the moves is not defined correcty.\n", Attribute.BRIGHT_RED_TEXT()) +
                         "The expected length is 5, but "+wrongMoveDefinition.getSize()+ " was provided.\n" +
                         "Move in question: " + wrongMoveDefinition.getMoveDefinition());
             } catch (IllegalArgumentException illegalMoveException){
@@ -248,19 +252,20 @@ public class Main {
                 "Symbols to display when running the machine: " + userSettings.getCharsToDisplay() +
                 "\nDefault blank symbol: " + userSettings.getBlankSymbol() +
                 "\nStored machines directory name: " + userSettings.getMachinesFolder());
-        System.out.println("Type " + colorize("display ", Attribute.BRIGHT_GREEN_TEXT()) + colorize("VALUE", Attribute.BRIGHT_YELLOW_TEXT()) + " to set the number of symbols to display to VALUE.\n" +
-                "Type " + colorize("blank ", Attribute.BRIGHT_GREEN_TEXT()) + colorize("CHAR", Attribute.BRIGHT_YELLOW_TEXT()) + " to set the default blank character to CHAR.\n" +
-                "Type " + colorize("directory ", Attribute.BRIGHT_GREEN_TEXT()) + colorize("PATH", Attribute.BRIGHT_YELLOW_TEXT()) + " to set the machines directory to PATH.\n" +
-                "Type " + colorize("default", Attribute.BRIGHT_GREEN_TEXT()) + " to restore the settings to default.\n" +
-                "Type " + colorize("menu", Attribute.BRIGHT_GREEN_TEXT()) + " to exit to the menu.");
+        
+        printMenu(new String[]{"display VALUE", "blank CHAR", "directory PATH", "default", "menu"},
+                new String[]{"set the number of symbols to display to VALUE", "set the default blank character to CHAR", "set the machines directory to PATH", "restore the settings to default", "exit to main menu"});
+
         String[] commandAndArgs = getUserInput().split(" ");
         boolean settingsChanged = false;
         if (commandAndArgs[0].trim().compareToIgnoreCase("display") == 0) {
-            if(userSettings.setCharsToDisplay(Integer.parseInt(commandAndArgs[1]))==0){
+            try{
+                userSettings.setCharsToDisplay(Integer.parseInt(commandAndArgs[1]));
                 settingsChanged = true;
-            } else {
-                System.out.println("Invalid argument.");
+            } catch (NumberFormatException e) {
+                System.out.println(colorize("Invalid argument.", Attribute.BRIGHT_RED_TEXT()));
             }
+
         } else if (commandAndArgs[0].trim().compareToIgnoreCase("blank") == 0) {
             userSettings.setBlankSymbol(commandAndArgs[1].charAt(0));
             settingsChanged = true;
@@ -273,13 +278,13 @@ public class Main {
                         File dir = new File(userSettings.getMachinesFolder());
                         FileUtils.copyDirectory(dir, newDir);
                     } catch (IOException e){
-                        System.out.println("Unable to copy files.");
+                        System.out.println(colorize("Unable to copy files.", Attribute.BRIGHT_RED_TEXT()));
                     }
                 }
                 userSettings.setMachinesFolder(commandAndArgs[1]);
                 settingsChanged = true;
             } else {
-                System.out.println("Unable to create a folder with that name.");
+                System.out.println(colorize("Unable to create a folder with that name.", Attribute.BRIGHT_RED_TEXT()));
             }
         } else if (commandAndArgs[0].trim().compareToIgnoreCase("default") == 0) {
             userSettings = new Settings();
@@ -289,10 +294,10 @@ public class Main {
             System.out.println("Exiting to main menu.");
             mainMenu();
         } else {
-            System.out.println("Invalid command.");
+           System.out.println(colorize("Invalid command.", Attribute.BRIGHT_RED_TEXT()));
         }
         if(settingsChanged){
-            System.out.print("Settings changed. ");
+            System.out.print("Settings changed.");
             userSettings.saveSettings();
         }
         settingsMenu();
