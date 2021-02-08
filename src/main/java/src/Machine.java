@@ -9,11 +9,8 @@ import java.io.*;
 
 import static com.diogonunes.jcolor.Ansi.colorize;
 
-<<<<<<< HEAD
-=======
 public class Machine {
 
->>>>>>> backup
     private Tape tape;
 
     private char[] alphabet;
@@ -106,11 +103,7 @@ public class Machine {
                 }
 
             } catch (NullPointerException n){
-<<<<<<< HEAD
-                System.out.println("No defined move!");
-=======
                 System.out.println(colorize("No defined move!", Attribute.BRIGHT_RED_TEXT()));
->>>>>>> backup
                 return;
             } catch (IllegalArgumentException i){
                 System.out.println(colorize(i.getMessage(), Attribute.BRIGHT_RED_TEXT()));
