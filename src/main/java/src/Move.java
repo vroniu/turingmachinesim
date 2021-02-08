@@ -34,11 +34,4 @@ public class Move {
         return newDir;
     }
 
-    public void print(){
-        System.out.println("state:"+ readState + " char:" + readChar + " new state:" + newState + " new char:" + newChar + " dir:" + newDir);
-    }
-
-    public String stringValue(){
-        return readState + "," + readChar + "," + newState + "," + newChar + "," + newDir;
-    }
 }

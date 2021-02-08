@@ -36,7 +36,7 @@ public class Machine {
     public static String getMachineDescriptionFromJson(String path){
         Machine machine = Machine.fromJson(path);
         if(machine == null){
-            return "Opis niedostępny.";
+            return "Description unavailable";
         } else return machine.description;
     }
 
