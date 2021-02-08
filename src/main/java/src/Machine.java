@@ -1,13 +1,19 @@
 
 package src;
 
+import com.diogonunes.jcolor.Attribute;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.*;
 
+import static com.diogonunes.jcolor.Ansi.colorize;
+
+<<<<<<< HEAD
+=======
 public class Machine {
 
+>>>>>>> backup
     private Tape tape;
 
     private char[] alphabet;
@@ -59,6 +65,10 @@ public class Machine {
         this.description = description;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void run(){
         //Reset the machine
         this.currState=this.startingState;
@@ -96,10 +106,14 @@ public class Machine {
                 }
 
             } catch (NullPointerException n){
+<<<<<<< HEAD
                 System.out.println("No defined move!");
+=======
+                System.out.println(colorize("No defined move!", Attribute.BRIGHT_RED_TEXT()));
+>>>>>>> backup
                 return;
             } catch (IllegalArgumentException i){
-                System.out.println(i.getMessage());
+                System.out.println(colorize(i.getMessage(), Attribute.BRIGHT_RED_TEXT()));
                 return;
             }
 
@@ -109,7 +123,7 @@ public class Machine {
         displayCurrentTape(true);
         this.tape.strip();
         System.out.println("\nTape after the operation:");
-        displayAllTape(true);
+        displayAllTape();
         System.out.println(" ");
     }
 
@@ -121,29 +135,9 @@ public class Machine {
         }
     }
 
-    public void displayAllTape(boolean showHead){
+    public void displayAllTape(){
         for (int i = -tape.getNegativeTapeLen(); i < tape.getTapeLen(); i++) {
             System.out.print(tape.getSymbol(i));
-        }
-    }
-
-    //TODO - zrobic tak zeby to dzialalo :DDD
-    public void displayConfig(int configurationNumber){
-        System.out.print("  K:"+(configurationNumber+1)+"   ");
-        if (currHeadPos < 0){
-            System.out.print("q"+currState+" "+tape.getSymbol(currHeadPos));
-        }
-        for(int i =0; i<tape.getTapeLen(); i++){
-            if(i==currHeadPos ){
-                //Dont print the whitespace for the first symbol
-                if(i==0)System.out.print("q"+currState+" "+tape.getSymbol(i));
-                else System.out.print(" q"+currState+" "+tape.getSymbol(i));
-            }
-            else System.out.print(tape.getSymbol(i));
-        }
-        //If the head is in the "infinite blanks" after the tape
-        if (currHeadPos >= tape.getTapeLen()){
-            System.out.print(" q"+currState+" "+tape.getSymbol(currHeadPos));
         }
     }
 

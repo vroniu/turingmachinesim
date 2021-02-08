@@ -1,6 +1,10 @@
 package src;
 
+import org.apache.commons.lang.ArrayUtils;
+
+import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class Tape {
 
@@ -53,29 +57,30 @@ public class Tape {
 
     //Strip the tape of trailing and leading blanks
     public void strip(){
-        //Count the chars to strip on the infinite-left tape
-        int i = -negativeTapeLen;
-        int charsToStrip = 0;
-        while(i < 0){
-            if(this.getSymbol(i) == Main.userSettings.getBlankSymbol()){
-                i++; charsToStrip++;
-            } else break;
-        }
-        //Shrink the array
-        char[] newTapeData = Arrays.copyOf(tapeDataNegative, negativeTapeLen - charsToStrip);
-        tapeDataNegative = newTapeData;
-        negativeTapeLen -= charsToStrip;
 
-        //Same but for the infinite-right side
-        charsToStrip = 0;
-        i = tapeLen - 1;
-        while(i >= 0){
-            if(this.getSymbol(i) == Main.userSettings.getBlankSymbol()){
-                i--; charsToStrip++;
-            } else break;
+        ArrayUtils.reverse(tapeDataNegative);
+        String strippedTape = new String(tapeDataNegative) + new String(tapeData);
+
+        int index;
+        for (index = 0; index < strippedTape.length(); index++) {
+            if (strippedTape.charAt(index) != Main.userSettings.getBlankSymbol()) {
+                break;
+            }
         }
-        newTapeData = Arrays.copyOf(tapeData, tapeLen - charsToStrip);
-        tapeData = newTapeData;
-        tapeLen -= charsToStrip;
+        strippedTape = strippedTape.substring(index);
+
+        for (index = strippedTape.length() - 1; index >= 0; index--) {
+            if (strippedTape.charAt(index) != Main.userSettings.getBlankSymbol()) {
+                break;
+            }
+        }
+
+        strippedTape = strippedTape.substring(0, index + 1);
+
+        tapeLen = strippedTape.length();
+        tapeData = strippedTape.toCharArray();
+        negativeTapeLen = 0;
+        tapeDataNegative = new char[negativeTapeLen];
+
     }
 }

@@ -6,7 +6,7 @@ public class DeltaFunc {
 
     private ArrayList<Move> moves;
 
-    public DeltaFunc(String[] movesToGenerate) throws IllegalArgumentException, WrongMoveDefinition{
+    public DeltaFunc(ArrayList<String> movesToGenerate) throws IllegalArgumentException, WrongMoveDefinition{
         moves = new ArrayList<>();
         for(String nMove : movesToGenerate){
             String[] moveData = nMove.split(",");
