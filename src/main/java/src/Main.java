@@ -129,7 +129,7 @@ public class Main {
             //Load the machine and go into menu
             Machine newMachine = Machine.fromJson(Main.userSettings.getMachinesFolder() + "/" + selMachine.trim());
             if (newMachine != null) {
-                System.out.println("Loaded machine " + colorize(newMachine.getName(), Attribute.BRIGHT_GREEN_BACK()));
+                System.out.println("Loaded machine " + colorize(newMachine.getName(), Attribute.BRIGHT_GREEN_TEXT()));
                 machineMainMenu(newMachine);
             } else mainMenu();
         } else if (action.trim().compareToIgnoreCase("exit") == 0) {
